@@ -1,7 +1,6 @@
     const form = document.getElementById('form');
     const submitFieldsBtn = document.getElementById('submit_fields');
     const submitGraphBtn = document.getElementById('submit-graph');
-    const clearTableBtn = document.getElementById('clear_table');
     const clearGraphBtn = document.getElementById('clear_graf');
     const errorDiv = document.getElementById('error_div');
     const resultTable = document.getElementById('result-table');
@@ -34,11 +33,6 @@ submitFieldsBtn.addEventListener('click', function(e) {
         localStorage.setItem('R_field', R);
 });
       
-clearTableBtn.addEventListener('click', function(e){
-    e.preventDefault
-    resultTable.innerHTML = '';
-    localStorage.removeItem('result_table');
-});
 
 clearGraphBtn.addEventListener('click', function(e) {
     points.length = 0;
@@ -131,7 +125,7 @@ function sendFormDataToServlet(x, y, R) {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (xhr.status === 200) {
-        const response = JSON.parse(xhr.responseText);
+        window.location.href = 'index.jsp'
       } else if (xhr.status === 404) {
         window.location.href = '/web2/error.jsp?error=404';
       } else {
@@ -175,35 +169,6 @@ function sendFormDataToServlet(x, y, R) {
     }
   }
 
-  function updateResultTable(data) {
-    const table = document.getElementById('result-table');
-  
-    const row = table.insertRow(-1);
-    const xCell = row.insertCell(0);
-    const yCell = row.insertCell(1);
-    const RCell = row.insertCell(2);
-    const resultCell = row.insertCell(3);
-    const timeCell = row.insertCell(4);
-    const executeTimeCell = row.insertCell(5);
-  
-    xCell.textContent = data.x;
-    yCell.textContent = data.y;
-    RCell.textContent = data.r;
-    resultCell.textContent = data.value;
-    timeCell.textContent = `${data.execTime} s`;
-    executeTimeCell.textContent = getCurrentTime();
-  
-    localStorage.setItem('result_table', JSON.stringify(table.innerHTML));
-  }
-
-function getCurrentTime() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-}
-
 window.addEventListener('load', function() {
     const savedXValues = localStorage.getItem('x_values');
     if (savedXValues) {
@@ -211,9 +176,4 @@ window.addEventListener('load', function() {
     }
   
     restoreFieldValues();
-  
-    const savedTableHTML = localStorage.getItem('result_table');
-    if (savedTableHTML) {
-      resultTable.innerHTML = JSON.parse(savedTableHTML);
-    }
 });

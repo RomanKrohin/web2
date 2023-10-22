@@ -1,9 +1,18 @@
 <%@page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ page import="utils.Result" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List" %>
-``
-<!DOCTYPE html>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="utils.Result" %>
+<%
+    List<Result> resultList;
+    if (request.getServletContext().getAttribute("resultList") == null){
+        resultList = new ArrayList<>();
+    }
+    else{
+        resultList = (List<Result>) request.getServletContext().getAttribute("resultList");
+    }
+%>
 <html>
     <head>
         <meta charset="utf-8">
@@ -189,33 +198,35 @@
                                 </svg>
                             </div>
                             <button class="submitBtn" name="submit_svg" id="submit-graph" type="submit">Send</button>
-                            <button class="clear_table" name="clear_table" id="clear_table" type="submit">Clear table</button>
                             <button class="clear_graf" name="clear_graf" id="clear_graf" type="submit">Clear graf</button>
                         </div>
                 </th>
                 <div>
                     <th width="70%">
-                    <table id="result-table" width="100%">
-                        <tr>
-                            <th width="17%">x</th>
-                            <th width="17%">y</th>
-                            <th width="17%">R</th>
-                            <th width="17%">result</th>
-                            <th width="17%">executetime</th>
-                            <th width="17%">time</th>
-                        </tr>
-                        <c:forEach var="result" items="${results}">
-                            <tr>
-                                <td>${result.x}</td>
-                                <td>${result.y}</td>
-                                <td>${result.R}</td>
-                                <td>${result.value}</td>
-                                <td>${result.execTime}</td>
-                                <td>${result.time}</td>
-                            </tr>
-                        </c:forEach>
-                    </table>
-
+                        <table id="result-table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>X</th>
+                                    <th>Y</th>
+                                    <th>R</th>
+                                    <th>Value</th>
+                                    <th>Execution Time</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <% for (Result result : resultList) { %>
+                                <tr>
+                                    <td><%= result.getX() %></td>
+                                    <td><%= result.getY() %></td>
+                                    <td><%= result.getR() %></td>
+                                    <td><%= result.getValue() %></td>
+                                    <td><%= result.getExecTime() %></td>
+                                    <td><%= result.getTime() %></td>
+                                </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
                     </th>
                 </div>
             </tr>

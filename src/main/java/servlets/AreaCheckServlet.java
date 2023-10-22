@@ -17,7 +17,8 @@ import utils.Result;
 
 @WebServlet("/checkArea")
 public class AreaCheckServlet  extends HttpServlet{
-    private static final String RESULT_LIST_ATTRIBUTE = "resultList";
+
+    private List<Result> resultList = new ArrayList<>();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -25,36 +26,21 @@ public class AreaCheckServlet  extends HttpServlet{
             float x = Float.parseFloat(request.getParameter("x"));
             float y = Float.parseFloat(request.getParameter("y"));
             float R = Float.parseFloat(request.getParameter("R"));
-            if (validate(x, y, R)) {
-                Result result = new Result();
-                double start = System.nanoTime();
-                result.setValue(String.valueOf(checkArea(x, y, R)));
-                result.setX(String.valueOf(x));
-                result.setY(String.valueOf(y));
-                result.setR(String.valueOf(R));
-                result.setTime(String.valueOf(LocalDateTime.now()));
+                if (validate(x, y, R)) {
+                    Result result = new Result();
+                    double start = System.nanoTime();
+                    result.setValue(String.valueOf(checkArea(x, y, R)));
+                    result.setX(String.valueOf(x));
+                    result.setY(String.valueOf(y));
+                    result.setR(String.valueOf(R));
+                    result.setTime(String.valueOf(LocalDateTime.now()));
 
-                ServletContext servletContext = getServletContext();
-                List<Result> results = (List<Result>) servletContext.getAttribute("results");
-                if (results == null) {
-                    results = new ArrayList<>();
-                    servletContext.setAttribute("results", results);
+                    double execTime = Math.round(((System.nanoTime() - start) * 0.00001) * 100.0) / 100.0;
+                    result.setExecTime(String.valueOf(execTime));
+
+                    resultList.add(result);
+                    request.getServletContext().setAttribute("resultList", resultList);
                 }
-                results.add(result);
-
-                double execTime = Math.round(((System.nanoTime() - start) * 0.00001) * 100.0) / 100.0;
-                result.setExecTime(String.valueOf(execTime));
-
-                addResultToServletContext(request, result);
-
-                ObjectMapper mapper = new ObjectMapper();
-                String jsonResult = mapper.writeValueAsString(result);
-
-                response.setContentType("application/json");
-                response.setCharacterEncoding("UTF-8");
-
-                response.getWriter().write(jsonResult);
-            }
         } catch (Exception e) {
             request.setAttribute("error", e.toString());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
@@ -103,15 +89,14 @@ public class AreaCheckServlet  extends HttpServlet{
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    private void addResultToServletContext(HttpServletRequest request, Result result) {
-        List<Result> resultList = (List<Result>) request.getServletContext().getAttribute(RESULT_LIST_ATTRIBUTE);
-        if (resultList == null) {
-            resultList = new ArrayList<>();
-        }
-
-        resultList.add(result);
-        request.getServletContext().setAttribute(RESULT_LIST_ATTRIBUTE, resultList);
+    private List<Result> getResultList() {
+        // Возвращает список результатов
+        return resultList;
+    }
+    
+    private void setResultList(List<Result> resultList) {
+        // Сохраняет список результатов в контексте сервлета
+        this.resultList = resultList;
     }
     
 }

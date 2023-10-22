@@ -12,7 +12,7 @@
     <body>
         <script src="./js/script.js" async defer></script>
         <header>
-            Крохин Роман Олегович: P3224, Вариант: 3407
+            Крохин Роман Олегович: P3224, Вариант: 24045
         </header>
 
         <table border="0" cellpadding="0" cellspacing="0" width="100%">

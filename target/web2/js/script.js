@@ -75,7 +75,7 @@ svg.addEventListener('click', function(e) {
     points.push(point);
   
     savePointsToLocalStorage();
-  });
+});
 
   loadPointsFromLocalStorage();
 

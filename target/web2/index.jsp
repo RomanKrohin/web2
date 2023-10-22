@@ -1,5 +1,9 @@
 <%@page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page import="utils.Result" %>
+<%@ page import="java.util.List" %>
+``
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -191,14 +195,27 @@
                 </th>
                 <div>
                     <th width="70%">
-                        <table id="result-table" width="100%">
+                    <table id="result-table" width="100%">
+                        <tr>
                             <th width="17%">x</th>
                             <th width="17%">y</th>
                             <th width="17%">R</th>
                             <th width="17%">result</th>
                             <th width="17%">executetime</th>
                             <th width="17%">time</th>
-                        </table>
+                        </tr>
+                        <c:forEach var="result" items="${applicationScope.resultList}">
+                            <tr>
+                                <td>${result.x}</td>
+                                <td>${result.y}</td>
+                                <td>${result.R}</td>
+                                <td>${result.value}</td>
+                                <td>${result.execTime}</td>
+                                <td>${result.time}</td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+
                     </th>
                 </div>
             </tr>

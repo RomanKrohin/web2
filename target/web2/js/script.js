@@ -75,7 +75,7 @@ svg.addEventListener('click', function(e) {
     points.push(point);
   
     savePointsToLocalStorage();
-});
+  });
 
   loadPointsFromLocalStorage();
 
@@ -132,7 +132,6 @@ function sendFormDataToServlet(x, y, R) {
     xhr.onload = function () {
       if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
-        updateResultTable(response);
       } else if (xhr.status === 404) {
         window.location.href = '/web2/error.jsp?error=404';
       } else {

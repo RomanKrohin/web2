@@ -2,7 +2,10 @@ package servlets;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +17,7 @@ import utils.Result;
 
 @WebServlet("/checkArea")
 public class AreaCheckServlet  extends HttpServlet{
+    private static final String RESULT_LIST_ATTRIBUTE = "resultList";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -30,8 +34,18 @@ public class AreaCheckServlet  extends HttpServlet{
                 result.setR(String.valueOf(R));
                 result.setTime(String.valueOf(LocalDateTime.now()));
 
+                ServletContext servletContext = getServletContext();
+                List<Result> results = (List<Result>) servletContext.getAttribute("results");
+                if (results == null) {
+                    results = new ArrayList<>();
+                    servletContext.setAttribute("results", results);
+                }
+                results.add(result);
+
                 double execTime = Math.round(((System.nanoTime() - start) * 0.00001) * 100.0) / 100.0;
                 result.setExecTime(String.valueOf(execTime));
+
+                addResultToServletContext(request, result);
 
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonResult = mapper.writeValueAsString(result);
@@ -87,6 +101,17 @@ public class AreaCheckServlet  extends HttpServlet{
             return true;
         }
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addResultToServletContext(HttpServletRequest request, Result result) {
+        List<Result> resultList = (List<Result>) request.getServletContext().getAttribute(RESULT_LIST_ATTRIBUTE);
+        if (resultList == null) {
+            resultList = new ArrayList<>();
+        }
+
+        resultList.add(result);
+        request.getServletContext().setAttribute(RESULT_LIST_ATTRIBUTE, resultList);
     }
     
 }

@@ -5,13 +5,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import utils.Result;
 
@@ -33,7 +31,7 @@ public class AreaCheckServlet  extends HttpServlet{
                     result.setX(String.valueOf(x));
                     result.setY(String.valueOf(y));
                     result.setR(String.valueOf(R));
-                    result.setTime(String.valueOf(LocalDateTime.now()));
+                    result.setTime(String.valueOf(LocalDateTime.now().toLocalTime().withNano(0)));
 
                     double execTime = Math.round(((System.nanoTime() - start) * 0.00001) * 100.0) / 100.0;
                     result.setExecTime(String.valueOf(execTime));
@@ -90,12 +88,10 @@ public class AreaCheckServlet  extends HttpServlet{
     }
 
     private List<Result> getResultList() {
-        // Возвращает список результатов
         return resultList;
     }
     
     private void setResultList(List<Result> resultList) {
-        // Сохраняет список результатов в контексте сервлета
         this.resultList = resultList;
     }
     

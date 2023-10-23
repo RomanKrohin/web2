@@ -127,7 +127,7 @@ function sendFormDataToServlet(x, y, R) {
       if (xhr.status === 200) {
         window.location.href = 'index.jsp'
       } else if (xhr.status === 404) {
-        window.location.href = '/web2/error.jsp?error=404';
+        window.location.replace ('error.jsp?error=404 Not Found');
       } else {
         showError('Error: ' + xhr.status);
       }

@@ -38,6 +38,7 @@ public class AreaCheckServlet  extends HttpServlet{
 
                     resultList.add(result);
                     request.getServletContext().setAttribute("resultList", resultList);
+                    request.getRequestDispatcher("/result.jsp").forward(request, response);
                 }
         } catch (Exception e) {
             request.setAttribute("error", e.toString());
@@ -75,7 +76,7 @@ public class AreaCheckServlet  extends HttpServlet{
       }
     
     private boolean checkArea(float x, float y, float R){
-        if (x >= 0 && x <= R/2 && y >= 0 && y <= R) {
+        if (x >= 0 && x <= R && y >= 0 && y <= R/2) {
             return true;
         }
         if (x >= 0 && y <= 0 && Math.sqrt(x*x+y*y)<= R) {

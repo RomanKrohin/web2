@@ -1,7 +1,5 @@
     const form = document.getElementById('form');
     const submitFieldsBtn = document.getElementById('submit_fields');
-    const submitGraphBtn = document.getElementById('submit-graph');
-    const clearGraphBtn = document.getElementById('clear_graf');
     const errorDiv = document.getElementById('error_div');
     const resultTable = document.getElementById('result-table');
     const svg = document.getElementById('svg');
@@ -16,6 +14,41 @@
         x_values.push(event.target.value);
     }
     
+    const RField = document.getElementById('R_field');
+
+    RField.addEventListener('input', function(e) {
+      const R = parseFloat(RField.value).toFixed(2);
+      localStorage.setItem('R_field', R);
+
+      const pointsSVG = document.querySelectorAll('#svg circle');
+      pointsSVG.forEach(function(point) {
+        point.parentNode.removeChild(point);
+      });
+
+      document.querySelector('#svg text[data-dynamic-rx]').textContent = +R/2;
+      document.querySelector('#svg text[data-dynamic-rxx]').textContent = +R;
+      document.querySelector('#svg text[data-dynamic-r-x]').textContent = -R/2;
+      document.querySelector('#svg text[data-dynamic-r-xx]').textContent = -R;
+      document.querySelector('#svg text[data-dynamic-ry]').textContent = +R/2;
+      document.querySelector('#svg text[data-dynamic-ryy]').textContent = +R;
+      document.querySelector('#svg text[data-dynamic-r-y]').textContent = -R/2;
+      document.querySelector('#svg text[data-dynamic-r-yy]').textContent = -R;
+
+    const savedData = localStorage.getItem('graphData');
+    if (savedData && !isNaN(R)) {
+      const parsedData = JSON.parse(savedData);
+      const { x, y } = parsedData;
+      for (let i = 0; i < x.length; i++) {
+          const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          point.setAttribute('cx', ((parseFloat(x[i]) - 2 * R) * (100 / R) + 400).toFixed(0));
+          point.setAttribute('cy', (200 - (100 / R) * (parseFloat(y[i]))).toFixed(0));
+          point.setAttribute('r', 3);
+          point.setAttribute('fill', 'red');
+          svg.appendChild(point);
+          points.push(point);
+      }
+    }
+    });
 
 submitFieldsBtn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -25,6 +58,7 @@ submitFieldsBtn.addEventListener('click', function(e) {
         const y = document.querySelector('input[name="y_field"]').value;
         const R = document.querySelector('input[name="R_field"]').value;
         if (validate(x, y, R)) {
+          printPoint(x, y, R);
           sendFormDataToServlet(x, y, R);
         }
       
@@ -32,46 +66,40 @@ submitFieldsBtn.addEventListener('click', function(e) {
         localStorage.setItem('y_field', y);
         localStorage.setItem('R_field', R);
 });
-      
 
-clearGraphBtn.addEventListener('click', function(e) {
-    points.length = 0;
-    localStorage.removeItem('graphData');
-  });
-      
-submitGraphBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-  
-    const R = document.querySelector('input[name="R_field"]').value;
-    points.forEach(function(point) {
-      const x = ((parseFloat(point.getAttribute('cx')) - 400) / (100 / R) + (2 * R)).toFixed(2);
-      const y = ((400 - parseFloat(point.getAttribute('cy'))) / (100 / R) - (2 * R)).toFixed(2);
-      if (validate(x, y, R)) {
-        sendFormDataToServlet(x, y, R);
-      }
-    });
-  
-    savePointsToLocalStorage();
-  });
-      
-  
+function printPoint(x, y, R) {
+  const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  point.setAttribute('cx', ((x - 2 * R) * (100 / R) + 400).toFixed(0));
+  point.setAttribute('cy', (200 - (100 / R) * (y)).toFixed(0));
+  point.setAttribute('r', 3);
+  point.setAttribute('fill', 'red');
+  svg.appendChild(point);
+  points.push(point);
+
+  savePointsToLocalStorage();
+}
+     
 svg.addEventListener('click', function(e) {
-    const rect = svg.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-  
-    const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    point.setAttribute('cx', x);
-    point.setAttribute('cy', y);
-    point.setAttribute('r', 3);
-    point.setAttribute('fill', 'red');
-    svg.appendChild(point);
-    points.push(point);
-  
-    savePointsToLocalStorage();
-  });
+  const rect = svg.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
-  loadPointsFromLocalStorage();
+  const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  point.setAttribute('cx', x);
+  point.setAttribute('cy', y);
+  point.setAttribute('r', 3);
+  point.setAttribute('fill', 'red');
+  svg.appendChild(point);
+  points.push(point);
+
+  const R = document.querySelector('input[name="R_field"]').value;
+  if (validate(((x - 400) / (100 / R) + (2 * R)).toFixed(2), ((400 - y) / (100 / R) - (2 * R)).toFixed(2), R)){
+    sendFormDataToServlet(((x - 400) / (100 / R) + (2 * R)).toFixed(2), ((400 - y) / (100 / R) - (2 * R)).toFixed(2), R);
+  }
+
+  savePointsToLocalStorage();
+});
+
 
 function restoreFieldValues() {
         const savedYField = localStorage.getItem('y_field');
@@ -95,7 +123,6 @@ function showError(message) {
 }
 
 function validate(x, y, R) {
-    console.log(x, y ,R)
     if (isNaN(y) || isNaN(R)){
         showError("Please enter numeric value")
         return false;
@@ -125,7 +152,8 @@ function sendFormDataToServlet(x, y, R) {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
       if (xhr.status === 200) {
-        window.location.href = 'index.jsp'
+        window.location.href = 'index.jsp';
+        window.location.href = 'result.jsp';
       } else if (xhr.status === 404) {
         window.location.replace ('error.jsp?error=404 Not Found');
       } else {
@@ -140,12 +168,13 @@ function sendFormDataToServlet(x, y, R) {
   }
   
   function savePointsToLocalStorage() {
+    const R = parseFloat(RField.value).toFixed(2);
     const savedData = {
       x: points.map(function(point) {
-        return parseFloat(point.getAttribute('cx'));
+        return parseFloat(((point.getAttribute('cx') - 400) / (100 / R) + (2 * R)).toFixed(2));
       }),
       y: points.map(function(point) {
-        return parseFloat(point.getAttribute('cy'));
+        return parseFloat(((400 - point.getAttribute('cy')) / (100 / R) - (2 * R)).toFixed(2));
       })
     };
     localStorage.setItem('graphData', JSON.stringify(savedData));
@@ -154,17 +183,20 @@ function sendFormDataToServlet(x, y, R) {
   function loadPointsFromLocalStorage() {
     const savedData = localStorage.getItem('graphData');
     if (savedData) {
+      restoreFieldValues(); // Восстанавливаем значения полей формы
+      const R = parseFloat(RField.value).toFixed(2); // Получаем значение R после восстановления полей формы
       const parsedData = JSON.parse(savedData);
       const { x, y } = parsedData;
-  
       for (let i = 0; i < x.length; i++) {
-        const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        point.setAttribute('cx', x[i]);
-        point.setAttribute('cy', y[i]);
-        point.setAttribute('r', 4);
-        point.setAttribute('fill', 'red');
-        svg.appendChild(point);
-        points.push(point);
+        if (!isNaN(R), !isNaN(x[i]),!isNaN(y[i])){
+          const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          point.setAttribute('cx', ((parseFloat(x[i]) - 2 * R) * (100 / R) + 400).toFixed(0));
+          point.setAttribute('cy', (200 - (100 / R) * (parseFloat(y[i]))).toFixed(0));
+          point.setAttribute('r', 3);
+          point.setAttribute('fill', 'red');
+          svg.appendChild(point);
+          points.push(point);
+        }
       }
     }
   }
@@ -177,3 +209,5 @@ window.addEventListener('load', function() {
   
     restoreFieldValues();
 });
+
+loadPointsFromLocalStorage();

@@ -6,12 +6,16 @@
 <%@ page import="utils.Result" %>
 <%
     List<Result> resultList;
+    Result resultR;
+    String R="R";
     if (request.getServletContext().getAttribute("resultList") == null){
         resultList = new ArrayList<>();
     }
     else{
         resultList = (List<Result>) request.getServletContext().getAttribute("resultList");
-    }
+        resultR = resultList.get(resultList.size()-1);
+        R=String.valueOf(resultR.getR());
+    } 
 %>
 <html>
     <head>
@@ -49,7 +53,7 @@
                             <br>
                             <input type="text" placeholder="y" name="y_field" maxlength="10" required>
                             <br>
-                            <input type="text" placeholder="R" name="R_field" maxlength="10" required>
+                            <input type="text" placeholder="R" name="R_field" maxlength="10" id="R_field" required>
                             <br>
                             <button class="submitBtn" name="submit" type="submit" id="submit_fields">Send</button>
                             </form>
@@ -128,45 +132,53 @@
                                 <text fill="black"
                                     x="245"
                                     y="190"
-                                >R/2
+                                    data-dynamic-rx
+                                >
                                 </text>
                                 <text fill="black"
                                     x="298"
                                     y="190"
-                                >R
+                                    data-dynamic-rxx
+                                >
                                 </text>
                     
                                 <text fill="black"
                                     x="90"
                                     y="190"
-                                >-R
+                                    data-dynamic-r-xx
+                                >
                                 </text>
                                 <text fill="black"
                                     x="140"
                                     y="190"
-                                >-R/2
+                                    data-dynamic-r-x
+                                >
                                 </text>
                     
                                 <text fill="black"
                                     x="210"
                                     y="155"
-                                >R/2
+                                    data-dynamic-r-y
+                                >
                                 </text>
                                 <text fill="black"
                                     x="210"
                                     y="105"
-                                >R
+                                    data-dynamic-r-yy
+                                >
                                 </text>
                     
                                 <text fill="black"
                                     x="210"
                                     y="255"
-                                >-R/2
+                                    data-dynamic-ry
+                                >
                                 </text>
                                 <text fill="black"
                                     x="210"
                                     y="305"
-                                >-R
+                                    data-dynamic-ryy
+                                >
                                 </text>
                                 <polygon points="360,200 350,195 350,205" fill="black" />
                                 <polygon points="200,40 195,50 205,50" fill="black" />
@@ -197,8 +209,6 @@
                                 ></path>
                                 </svg>
                             </div>
-                            <button class="submitBtn" name="submit_svg" id="submit-graph" type="submit">Send</button>
-                            <button class="clear_graf" name="clear_graf" id="clear_graf" type="submit">Clear graf</button>
                         </div>
                 </th>
                 <div>

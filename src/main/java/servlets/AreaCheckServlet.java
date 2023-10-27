@@ -87,13 +87,5 @@ public class AreaCheckServlet  extends HttpServlet{
         }
         return false;
     }
-
-    private List<Result> getResultList() {
-        return resultList;
-    }
-    
-    private void setResultList(List<Result> resultList) {
-        this.resultList = resultList;
-    }
     
 }

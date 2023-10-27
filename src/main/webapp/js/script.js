@@ -3,8 +3,8 @@
     const errorDiv = document.getElementById('error_div');
     const resultTable = document.getElementById('result-table');
     const svg = document.getElementById('svg');
-    const points = [];
-    let x_values = [];
+    const x_values=[];
+    let points = [];
 
     document.querySelectorAll(".x_val").forEach(function(button){
         button.addEventListener("click",handler);
@@ -17,7 +17,7 @@
     const RField = document.getElementById('R_field');
 
     RField.addEventListener('input', function(e) {
-      const R = parseFloat(RField.value).toFixed(2);
+      const R = parseFloat(RField.value).toFixed(1);
       localStorage.setItem('R_field', R);
 
       const pointsSVG = document.querySelectorAll('#svg circle');
@@ -29,15 +29,16 @@
       document.querySelector('#svg text[data-dynamic-rxx]').textContent = +R;
       document.querySelector('#svg text[data-dynamic-r-x]').textContent = -R/2;
       document.querySelector('#svg text[data-dynamic-r-xx]').textContent = -R;
-      document.querySelector('#svg text[data-dynamic-ry]').textContent = +R/2;
-      document.querySelector('#svg text[data-dynamic-ryy]').textContent = +R;
-      document.querySelector('#svg text[data-dynamic-r-y]').textContent = -R/2;
-      document.querySelector('#svg text[data-dynamic-r-yy]').textContent = -R;
+      document.querySelector('#svg text[data-dynamic-ry]').textContent = -R/2;
+      document.querySelector('#svg text[data-dynamic-ryy]').textContent = -R;
+      document.querySelector('#svg text[data-dynamic-r-y]').textContent = +R/2;
+      document.querySelector('#svg text[data-dynamic-r-yy]').textContent = +R;
 
     const savedData = localStorage.getItem('graphData');
     if (savedData && !isNaN(R)) {
       const parsedData = JSON.parse(savedData);
       const { x, y } = parsedData;
+      points=[];
       for (let i = 0; i < x.length; i++) {
           const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
           point.setAttribute('cx', ((parseFloat(x[i]) - 2 * R) * (100 / R) + 400).toFixed(0));
@@ -48,7 +49,7 @@
           points.push(point);
       }
     }
-    });
+});
 
 submitFieldsBtn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -183,8 +184,8 @@ function sendFormDataToServlet(x, y, R) {
   function loadPointsFromLocalStorage() {
     const savedData = localStorage.getItem('graphData');
     if (savedData) {
-      restoreFieldValues(); // Восстанавливаем значения полей формы
-      const R = parseFloat(RField.value).toFixed(2); // Получаем значение R после восстановления полей формы
+      restoreFieldValues();
+      const R = parseFloat(RField.value).toFixed(2);
       const parsedData = JSON.parse(savedData);
       const { x, y } = parsedData;
       for (let i = 0; i < x.length; i++) {

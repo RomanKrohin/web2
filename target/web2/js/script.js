@@ -3,7 +3,7 @@
     const errorDiv = document.getElementById('error_div');
     const resultTable = document.getElementById('result-table');
     const svg = document.getElementById('svg');
-    const x_values=[];
+    let x_values=[];
     let points = [];
 
     document.querySelectorAll(".x_val").forEach(function(button){
@@ -23,7 +23,7 @@
       const pointsSVG = document.querySelectorAll('#svg circle');
       pointsSVG.forEach(function(point) {
         point.parentNode.removeChild(point);
-      });
+    });
 
       document.querySelector('#svg text[data-dynamic-rx]').textContent = +R/2;
       document.querySelector('#svg text[data-dynamic-rxx]').textContent = +R;
@@ -112,6 +112,14 @@ function restoreFieldValues() {
         if (savedRField) {
           document.querySelector('input[name="R_field"]').value = savedRField;
         }
+        document.querySelector('#svg text[data-dynamic-rx]').textContent = +savedRField/2;
+        document.querySelector('#svg text[data-dynamic-rxx]').textContent = +savedRField;
+        document.querySelector('#svg text[data-dynamic-r-x]').textContent = -savedRField/2;
+        document.querySelector('#svg text[data-dynamic-r-xx]').textContent = -savedRField;
+        document.querySelector('#svg text[data-dynamic-ry]').textContent = -savedRField/2;
+        document.querySelector('#svg text[data-dynamic-ryy]').textContent = -savedRField;
+        document.querySelector('#svg text[data-dynamic-r-y]').textContent = +savedRField/2;
+        document.querySelector('#svg text[data-dynamic-r-yy]').textContent = +savedRField;
 }
 
 function showError(message) {
@@ -124,6 +132,10 @@ function showError(message) {
 }
 
 function validate(x, y, R) {
+    if (x.trim() === '') {
+      showError("Please enter a value for x");
+      return false;
+    }
     if (isNaN(y) || isNaN(R)){
         showError("Please enter numeric value")
         return false;

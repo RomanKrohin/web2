@@ -16,7 +16,7 @@ import utils.Result;
 @WebServlet("/checkArea")
 public class AreaCheckServlet  extends HttpServlet{
 
-    private List<Result> resultList = new ArrayList<>();
+    List<Result> resultList = new ArrayList<>();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

@@ -1,4 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="customTag" uri="/WEB-INF/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List" %>
@@ -237,6 +238,7 @@
                             <% } %>
                             </tbody>
                         </table>
+                        <customTag:countTrue listOfResults="<%= resultList%>" />
                     </th>
                 </div>
             </tr>

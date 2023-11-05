@@ -4,4 +4,9 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
+  <taglib>
+    <taglib-uri>/tags</taglib-uri>
+    <taglib-location>tags/MyTag.tld</taglib-location>
+  </taglib>
 </web-app>
